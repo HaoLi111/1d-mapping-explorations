@@ -27,4 +27,7 @@ psd https://github.com/abarbour/psd
 The package I had built to investigate series, calculate Cob-Web plot, and estimate Lyapunov-exponent, extract period is 
 SeriesXplorer
 
+## Index
 
+Map3.R - containing the reporting function wrapped from many other packages
+Tent_Map.R - to test with tent mapping, see wiki https://en.wikipedia.org/wiki/Tent_map and Wolfram Math World page  http://mathworld.wolfram.com/TentMap.html for more.

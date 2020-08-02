@@ -18,8 +18,9 @@ sensitivity_1_1Map = function(MAP_FUN,lambdaSeq,xInit=.4,nEsc=2^10,n = 2^9){
   l_lambdaSeq <- length(lambdaSeq)
   x_Seq = rep(xInit,l_lambdaSeq)
   
-  for(i in 1:nEsc)  for(j in 1:l_lambdaSeq) x_Seq[j] = MAP_FUN(x_Seq[j], lambdaSeq[j])
-  
+  if(nEsc!=0){
+    for(i in 1:nEsc)  for(j in 1:l_lambdaSeq) x_Seq[j] = MAP_FUN(x_Seq[j], lambdaSeq[j])
+  }
   xResult=matrix(0,n,l_lambdaSeq)
   for(i in 1:n){
     for(j in 1:l_lambdaSeq) x_Seq[j] = MAP_FUN(x_Seq[j], lambdaSeq[j])
@@ -43,36 +44,38 @@ matplot_xResult = function(xResult,lambdaSeq,
 
 
 
-report_sens_1_1Map = function(MAP_FUN,MapName,lambdaSeq,lb,ub,xInit=.4){
+report_sens_1_1Map = function(MAP_FUN,MapName,lambdaSeq,lb,ub,xInit=.4,
+                              sub.dir = ""){
   
   l = length(lambdaSeq)
   
   xResult = sensitivity_1_1Map(MAP_FUN,xInit = xInit,lambdaSeq)
-  matplot_xResult(xResult,lambdaSeq,save =TRUE,addtitle = "Overview")
+  matplot_xResult(xResult,lambdaSeq,save =TRUE,addtitle = "Overview",
+                  fileName = paste0(sub.dir,"General View.png"))
 
 #Fourier Transform
-i =5
-dir.create("FFT")
+
+dir.create(paste0(sub.dir,"FFT"))
 for(i in 1:l){
-  png(paste0("FFT/",i,".png"),width =2400,height =1800)
-  plot(Re(fft(xResult[,i])),xlab ="f", ylab = "Re(F(f(t)))",cex.main=3,main = paste("Lambda =",i),cex.lab=2,type = "l")
+  png(paste0(sub.dir,"FFT/",i,".png"),width =2400,height =1800)
+  plot(Re(fft(xResult[,i])),xlab ="f", ylab = "Re(F(f(t)))",cex.main=3,main = paste("Lambda =",lambdaSeq[i]),cex.lab=2,type = "l")
   grid()
   dev.off()
 }
 
 # power Spectral
-psd_dir = "PSD"
+psd_dir = paste0(sub.dir,"PSD")
 dir.create(psd_dir)
 #origionalwd =getwd()
 #setwd(paste(origionalwd,psd_dir,sep = '/')
 library(psd)
 for(i in 1:l){
   try({
-    png(paste0("PSD/",i,".png"),width =2400,height =1800)
+    png(paste0(psd_dir,"/",i,".png"),width =2400,height =1800)
     pspectrum(xResult[,i],plot=TRUE,cex.text=3)
     dev.off()
   })
-
+  try(dev.off())
 }
 #setwd(origionalwd)
 
@@ -82,7 +85,7 @@ for(i in 1:l){
 
 
 #Cobweb
-cob_dir =paste("CobWeb")
+cob_dir =paste0(sub.dir,"CobWeb")
 dir.create(cob_dir)
 message(paste(cob_dir,"created"))
 #duplicate l = length(lambdaSeq)
@@ -102,9 +105,10 @@ for(i in 1:l) {
   ggsave(paste0(cob_dir,'/',i,".png"),width=8,height = 6,dpi = 300)
   message(paste("Working on",i))
 }
+library(av)
+av_encode_video(paste(cob_dir,'/',1:l,'.png',sep = ''),"CobWeb.mp4")
+try({
+  av_encode_video(paste(sub.dir,'FFT/',1:l,'.png',sep = ''),"FFT.mp4")
+  })
 
 }
-
-#report_sens_1_1Map(lambdaSeq = lambdaSeq,MAP_FUN = MAP_FUN,ub=ub,lb=lb,MapName=MapName)
-
-

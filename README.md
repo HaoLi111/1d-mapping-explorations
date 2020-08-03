@@ -19,7 +19,7 @@ It is very important for R users to know to work with this package (as it is alm
 H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
 
 RColorBrewer
-ggthemeshttps://github.com/jrnold/ggthemes
+ggthemes https://github.com/jrnold/ggthemes
 
 The power-spectral calculation and plotting need
 psd https://github.com/abarbour/psd
